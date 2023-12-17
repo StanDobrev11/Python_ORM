@@ -1,0 +1,2 @@
+py manage.py runserver then connect using 127.0.0.1:8000 as default port
+ctr + pause/break to quit
