@@ -7,3 +7,5 @@ pip install ipython
 ---RUN
 python manage.py shell
 
+py manage.py dbshell - starting sql
+
