@@ -52,15 +52,21 @@ class Exercise(models.Model):
     duration_minutes = models.PositiveIntegerField()
     equipment = models.CharField(max_length=90)
     video_url = models.URLField(blank=True, null=True)
-    calories_burned = models.PositiveIntegerField()
+    calories_burned = models.PositiveIntegerField(default=0)
     is_favorite = models.BooleanField(default=False)
 
 
 class Book(models.Model):
+    GENRE_CHOICES = [
+        ("Fiction", "Fiction"),
+        ("Non-Fiction", "Non-Fiction"),
+        ("Science Fiction", "Science Fiction"),
+        ("Horror", "Horror")
+    ]
     title = models.CharField(max_length=30)
     author = models.CharField(max_length=100)
-    genre = models.CharField(max_length=20)
-    publication_date = models.DateField(auto_now_add=True)
+    genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
+    publication_date = models.DateField(auto_now_add=True, editable=False)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
     rating = models.FloatField()
