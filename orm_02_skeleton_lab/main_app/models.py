@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 
 
@@ -39,7 +41,7 @@ class Project(models.Model):
     budget = models.DecimalField(null=True, decimal_places=2, max_digits=10)
     duration_in_days = models.PositiveIntegerField(null=True, verbose_name="Duration in Days")
     estimated_hours = models.FloatField(null=True, verbose_name="Estimated Hours")
-    start_date = models.DateField(verbose_name="Start Date", auto_now_add=True, null=True)
+    start_date = models.DateField(verbose_name="Start Date", default=date.today)
     created_on = models.DateTimeField(auto_now_add=True)
     last_edited_on = models.DateTimeField(auto_now=True)
 
