@@ -9,3 +9,9 @@ python manage.py shell
 
 py manage.py dbshell - starting sql
 
+
+pip install pycopg2 - driver for postgresql databases
+
+pip freeze > requirements.txt
+
+py manage.py createsuperuser
