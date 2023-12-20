@@ -21,10 +21,7 @@ def add_barcode(app, schema_editor):
 
 def reverse_add_barcode(app, schema_editor):
     Product = app.get_model("main_app", "Product")
-    all_products = Product.objects.all()
-    for product in all_products:
-        product.barcode = 0
-        product.save()
+    Product.objects.all().update(barcode=0)
 
     print('Reversed')
     pass
