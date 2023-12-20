@@ -3,26 +3,32 @@
 from django.db import migrations
 
 
-def set_price_based_on_brand(apps, schema_editor):
+def set_price_and_category(apps, schema_editor):
     smartphone_model = apps.get_model('main_app', 'Smartphone')
     all_phones = smartphone_model.objects.all()
 
     for phone in all_phones:
         phone.price = len(phone.brand) * 120
+        if phone.price >= 750:
+            phone.category = 'Expensive'
+        else:
+            phone.category = 'Cheap'
 
-    smartphone_model.objects.bulk_update(all_phones, ['price'])
+    smartphone_model.objects.bulk_update(all_phones, ['price', 'category'])
 
 
-def reverse_set_price(apps, schema_editor):
+def reverse_code(apps, schema_editor):
     smartphone_model = apps.get_model('main_app', 'Smartphone')
     all_phones = smartphone_model.objects.all()
 
     default_price = smartphone_model._meta.get_field('price').default
+    default_category = smartphone_model._meta.get_field('category').default
 
     for phone in all_phones:
         phone.price = default_price
+        phone.category = default_category
 
-    smartphone_model.objects.bulk_update(all_phones, ['price'])
+    smartphone_model.objects.bulk_update(all_phones, ['price', 'category'])
 
 
 class Migration(migrations.Migration):
@@ -31,5 +37,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_price_based_on_brand, reverse_set_price)
+        migrations.RunPython(set_price_and_category, reverse_code)
     ]

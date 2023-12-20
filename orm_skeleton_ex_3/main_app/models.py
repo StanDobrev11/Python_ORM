@@ -94,10 +94,11 @@ class Smartphone(models.Model):
 
 
 class Order(models.Model):
+
     STATUS_CHOICE = {
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
+        ("Pending", "Pending"),
+        ("Completed", "Completed"),
+        ("Cancelled", "Cancelled"),
     }
 
     product_name = models.CharField(max_length=30)
@@ -111,4 +112,4 @@ class Order(models.Model):
     delivery = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"Order #{self.product_name} - {self.customer_name}"
+        return f"Order #{self.pk} - {self.customer_name}"
