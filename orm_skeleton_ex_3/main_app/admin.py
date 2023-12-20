@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from main_app.models import EventRegistration, Movie, Student, Supplier, Course, Person, Item
+from main_app.models import EventRegistration, Movie, Student, Supplier, Course, Person, Item, Smartphone
 
 
 # Register your models here.
@@ -73,3 +73,8 @@ class PersonAdmin(admin.ModelAdmin):
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'quantity', 'rarity')
+
+
+@admin.register(Smartphone)
+class SmartphoneAdmin(admin.ModelAdmin):
+    list_display = ('brand', 'price', 'category')
