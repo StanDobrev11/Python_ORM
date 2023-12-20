@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Shoe
+from main_app.models import Shoe, Person
 
 
 # Create queries within functions
@@ -40,3 +40,5 @@ def add_shoes():
     return "Shoes created and saved"
 
 # print(add_shoes())
+
+print(Person.objects.all())

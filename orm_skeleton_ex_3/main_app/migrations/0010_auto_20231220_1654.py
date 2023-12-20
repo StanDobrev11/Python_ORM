@@ -20,27 +20,29 @@ def age_field_population(apps, schema_editor):
     If the age is greater than or equal to 18 - the group is "Adult".
     """
 
-    Person = apps.get_model('main_app', 'Person')
-    all_persons = Person.objects.all()
-    all_persons_ages = Person.objects.values_list('age', flat=True)
-    persons_groups = [find_age_group(age) for age in all_persons_ages]
+    person_model = apps.get_model('main_app', 'Person')
+    all_persons = person_model.objects.all()
 
-    for i in range(len(all_persons)):
-        person = all_persons[i]
-        person.age_group = persons_groups[i]
-        person.save()
+    for person in all_persons:
+        person.age_group = find_age_group(person.age)
+
+    # in order to save only once for optimization
+    person_model.objects.bulk_update(all_persons, ['age_group'])
 
     print('Age group populated')
 
 
 def reverse_age_field_populations(apps, schema_editor):
-    Person = apps.get_model('main_app', 'Person')
-    all_persons = Person.objects.all()
+    person_model = apps.get_model('main_app', 'Person')
+    all_persons = person_model.objects.all()
 
-    for i in range(len(all_persons)):
-        person = all_persons[i]
-        person.age_group = 'No age group'
-        person.save()
+    # to get default value of a column of a model
+    age_group_default = person_model._meta.get_field('age_group').default
+
+    for person in all_persons:
+        person.age_group = age_group_default
+
+    person_model.objects.bulk_update(all_persons, ['age_group'])
 
     print('Age group reversed to default value')
 
