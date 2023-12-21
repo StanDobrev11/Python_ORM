@@ -24,7 +24,33 @@ def add_students():
     return "Students created"
 
 
-# Run and print your queries
+def get_students_info():
+    all_student = Student.objects.all()
 
-print(add_students())
-print(Student.objects.all())
+    record = []
+    for student in all_student:
+        record.append(
+            f"Student №{student.student_id}: {student.first_name} {student.last_name}; Email: {student.email}")
+
+    return '\n'.join(record)
+
+def update_students_emails():
+    all_students = Student.objects.all()
+
+    for student in all_students:
+        username = student.email.split('@')[0]
+        email = username + '@' + 'uni-students.com'
+        student.email = email
+        student.save()
+
+def truncate_students():
+    Student.objects.all().delete()
+
+
+# Run and print your queries
+#
+# print(add_students())
+# print(Student.objects.all())
+# update_students_emails()
+# print(get_students_info())
+# truncate_students()
