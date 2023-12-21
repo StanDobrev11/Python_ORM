@@ -27,7 +27,7 @@ py manage.py migrate main_app zero -> reverse to zero, clean start
 
 creating manager --> ex_4 check models CUSTOM MANAGER, no to take data using .object
 Normally is done using new file "managers"
-
+then try in caller.py -> print(MyModel.custom_manager.custom_query_filter())
 
 ----- logger. placed in the settings of the project ------
 LOGGING = {
@@ -39,13 +39,25 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'DEBUG', # other levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
     },
     'loggers': {
-        'django.db.backends': {
+        'django.db.backends': { # responsible for the SQL logs
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         }
     }
 }
+
+# Custom manager -> usually separate file
+# class CustomManager(models.Manager):
+#     def custom_query_filter(self):
+#         return "Very complex logic here"
+
+
+# Class using custom manager
+# class MyModel(models.Model):
+#     field1 = models.CharField()
+#
+#     custom_manager = CustomManager()
