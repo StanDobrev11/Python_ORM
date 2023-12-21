@@ -34,6 +34,7 @@ def get_students_info():
 
     return '\n'.join(record)
 
+
 def update_students_emails():
     all_students = Student.objects.all()
 
@@ -43,9 +44,9 @@ def update_students_emails():
         student.email = email
         student.save()
 
+
 def truncate_students():
     Student.objects.all().delete()
-
 
 # Run and print your queries
 #

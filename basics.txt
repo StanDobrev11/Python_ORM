@@ -24,3 +24,28 @@ py manage.py showmigrations
 
 py manage.py migrate main_app 0003 -> reverse database to state of migrated 0003 migration
 py manage.py migrate main_app zero -> reverse to zero, clean start
+
+creating manager --> ex_4 check models CUSTOM MANAGER, no to take data using .object
+Normally is done using new file "managers"
+
+
+----- logger. placed in the settings of the project ------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler'}
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        }
+    }
+}
