@@ -154,11 +154,15 @@ def increase_room_capacity():
 
 
 def reserve_first_room():
-    HotelRoom.objects.first().update(is_reserved=True)
+    first_room = HotelRoom.objects.first()
+    first_room.is_reserved = True
+    first_room.save()
 
 
 def delete_last_room():
-    HotelRoom.objects.last().filter(is_reserved=True).delete()
+    last_room = HotelRoom.objects.last()
+    if last_room.is_reserved:
+        last_room.delete()
 
 
 # create_location('Sofia',
