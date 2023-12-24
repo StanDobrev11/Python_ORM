@@ -8,7 +8,7 @@ django.setup()
 
 # Import your models
 from main_app.models import ArtworkGallery, Laptop
-
+from django.db.models import Q, Case, When, Value, F
 
 # Create and check models
 def bulk_create_arts(*args):
@@ -25,13 +25,15 @@ def delete_negative_rated_arts():
     ArtworkGallery.objects.filter(rating__lt=0).delete()
 
 
-def bulk_create_laptops(args):
-    for arg in args:
-        arg.save()
+def bulk_create_laptops(*args):
+    Laptop.objects.bulk_create(*args)
+    # for arg in args:
+    #     arg.save()
 
 
 def update_to_512_GB_storage():
-    Laptop.objects.filter(brand__in=['Asus', 'Lenovo']).update(storage=512)
+    Laptop.objects.filter(Q(brand='Asus') | Q(brand='Lenovo')).update(storage=512)  # | -> OR, & -> AND
+    Laptop.objects.filter(brand__in=['Asus', 'Lenovo']).update(storage=512)  # same as above
 
 
 def update_to_16_GB_memory():
@@ -39,24 +41,38 @@ def update_to_16_GB_memory():
 
 
 def update_operation_systems():
-    all_laptops = Laptop.objects.all()
+    Laptop.objects.update(
+        operation_system=Case(
+            When(brand='Asus', then=Value('Windows')),
+            When(brand='Apple', then=Value('MacOS')),
+            When(brand_in=['Acer', 'Dell'], then=Value('Linux')),
+            When(brand='Lenovo', then=Value('Chrome OS')),
+            default=F('operation_system')
+        )
+    )
 
-    for laptop in all_laptops:
-        if laptop.brand == 'Asus':
-            laptop.operation_system = 'Windows'
-        elif laptop.brand == 'Apple':
-            laptop.operation_system = 'MacOS'
-        elif laptop.brand == 'Acer' or laptop.brand == 'Dell':
-            laptop.operation_system = 'Linux'
-        else:
-            laptop.operation_system = 'Chrome OS'
-
-    Laptop.objects.bulk_update(all_laptops, ['operation_system'])
+    # all_laptops = Laptop.objects.all()
+    #
+    # for laptop in all_laptops:
+    #     if laptop.brand == 'Asus':
+    #         laptop.operation_system = 'Windows'
+    #     elif laptop.brand == 'Apple':
+    #         laptop.operation_system = 'MacOS'
+    #     elif laptop.brand == 'Acer' or laptop.brand == 'Dell':
+    #         laptop.operation_system = 'Linux'
+    #     else:
+    #         laptop.operation_system = 'Chrome OS'
+    #
+    # Laptop.objects.bulk_update(all_laptops, ['operation_system'])
 
 
 def show_the_most_expensive_laptop():
     laptop = Laptop.objects.order_by('-price', '-pk').first()
     return f"{laptop.brand} is the most expensive laptop available for {laptop.price}$!"
+
+
+def delete_inexpencive_laptops():
+    Laptop.objects.filter(price__lt=1200).delete()
 
 # Run and print your queries
 # print(show_the_most_expensive_laptop())
