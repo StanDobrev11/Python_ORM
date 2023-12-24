@@ -18,7 +18,7 @@ class Meal(models.Model):
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
         ('Dinner', 'Dinner'),
-        ('Snack', 'Snack'),
+        ('Snack', 'Snack')
     )
 
     name = models.CharField(max_length=100)
@@ -33,7 +33,7 @@ class Dungeon(models.Model):
     DIFFICULTY_CHOICES = (
         ('Easy', 'Easy'),
         ('Medium', 'Medium'),
-        ('Hard', 'Hard'),
+        ('Hard', 'Hard')
     )
 
     name = models.CharField(max_length=100)
@@ -51,7 +51,7 @@ class Workout(models.Model):
         ('Strength', 'Strength'),
         ('Yoga', 'Yoga'),
         ('CrossFit', 'CrossFit'),
-        ('Calisthenics', 'Calisthenics'),
+        ('Calisthenics', 'Calisthenics')
     )
 
     name = models.CharField(max_length=200)
@@ -60,3 +60,32 @@ class Workout(models.Model):
     difficulty = models.CharField(max_length=50)
     calories_burned = models.PositiveIntegerField()
     instructor = models.CharField(max_length=100)
+
+
+class ArtworkGallery(models.Model):
+    artist_name = models.CharField(max_length=100)
+    art_name = models.CharField(max_length=100)
+    rating = models.IntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Laptop(models.Model):
+    BRAND_CHOICES = (
+        ("Asus", "Asus"),
+        ("Acer", "Acer"),
+        ("Apple", "Apple"),
+        ("Lenovo", "Lenovo"),
+        ("Dell", "Dell")
+    )
+    OP_SYS_CHOICES = (
+        ("Windows", "Windows"),
+        ("MacOS", "MacOS"),
+        ("Linux", "Linux"),
+        ("Chrome OS", "Chrome OS")
+    )
+    brand = models.CharField(max_length=20, choices=BRAND_CHOICES)
+    processor = models.CharField(max_length=100)
+    memory = models.PositiveIntegerField(help_text="Memory in GB")
+    storage = models.PositiveIntegerField(help_text="Storage in GB")
+    operation_system = models.CharField(max_length=20, choices=OP_SYS_CHOICES)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
