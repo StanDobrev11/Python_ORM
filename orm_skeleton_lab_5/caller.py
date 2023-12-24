@@ -1,4 +1,6 @@
+import datetime
 import os
+from datetime import date
 
 import django
 
@@ -90,7 +92,8 @@ def find_books_by_genre_and_language(genre, language):
 
 
 def find_authors_nationalities():
-    all_authors = Author.objects.filter(nationality__isnull=False)
+    # all_authors = Author.objects.filter(nationality__isnull=False)
+    all_authors = Author.objects.exclude(nationality=None)
 
     result = [f"{str(author)} is {author.nationality}" for author in all_authors]
 
@@ -105,15 +108,57 @@ def order_books_by_year():
 
 
 def delete_review_by_id(id):
-    review = Review.objects.filter(pk=id)[0]
-    string = f"Review by {review.author_name} was deleted"
+    review = Review.objects.get(pk=id)
+
     review.delete()
 
-    return string
+    return f"Review by {review.reviewer_name} was deleted"
+
+
+def filter_authors_by_nationalities(nationality):
+    all_authors = Author.objects.filter(nationality=nationality).order_by('first_name', 'last_name')
+
+    result = []
+    for author in all_authors:
+        if author.biography:
+            result.append(author.biography)
+        else:
+            result.append(f"{author.first_name} {author.last_name}")
+
+    return '\n'.join(result)
+
+
+def filter_authors_by_birth_year(start_year, end_year):
+    # all_authors = Author.objects.filter(birth_date__range=(f"{start_year}-01-01", f"{end_year}-12-31")).order_by(
+    #     '-birth_date')
+    # all_authors = Author.objects.filter(birth_date__year__range=(start_year, end_year)).order_by(
+    #     '-birth_date')
+    all_authors = Author.objects.filter(birth_date__year__gte=start_year).filter(birth_date__year__lte=end_year).order_by('-birth_date')
+
+    result = [f"{author.birth_date}: {author.first_name} {author.last_name}" for author in all_authors]
+
+    return '\n'.join(result)
+
+
+def change_reviewer_name(name, new_name):
+    all_reviews = Review.objects.filter(reviewer_name=name)
+
+    for review in all_reviews:
+        review.reviewer_name = new_name
+
+    Review.objects.bulk_update(all_reviews, ['reviewer_name'])
+
+    return Review.objects.all()
 
 
 # Run and print your queries
-print(delete_review_by_id(3))
+# print(change_reviewer_name("Alice Johnson", "A.J."))
+
+print(filter_authors_by_birth_year(1980, 2000))
+
+# print(filter_authors_by_nationalities('American'))
+
+# print(delete_review_by_id(1))
 
 # print(order_books_by_year())
 
