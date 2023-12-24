@@ -141,20 +141,23 @@ def filter_authors_by_birth_year(start_year, end_year):
 
 
 def change_reviewer_name(name, new_name):
-    all_reviews = Review.objects.filter(reviewer_name=name)
-
-    for review in all_reviews:
-        review.reviewer_name = new_name
-
-    Review.objects.bulk_update(all_reviews, ['reviewer_name'])
+    Review.objects.filter(reviewer_name=name).update(reviewer_name=new_name)
 
     return Review.objects.all()
+    # all_reviews = Review.objects.filter(reviewer_name=name)
+    #
+    # for review in all_reviews:
+    #     review.reviewer_name = new_name
+    #
+    # Review.objects.bulk_update(all_reviews, ['reviewer_name'])
+    #
+    # return Review.objects.all()
 
 
 # Run and print your queries
-# print(change_reviewer_name("Alice Johnson", "A.J."))
+print(change_reviewer_name("A.J.", "Alice Johnson"))
 
-print(filter_authors_by_birth_year(1980, 2000))
+# print(filter_authors_by_birth_year(1980, 2000))
 
 # print(filter_authors_by_nationalities('American'))
 

@@ -17,7 +17,7 @@ if os.path.exists('output.zip'):
 
 # zips files and folders
 with zipfile.ZipFile('output.zip', 'w') as zipf:
-    for root, dirs, files in os.walk('.'):  # using os.walk() to pass recursively through folders
+    for root, dirs, files in os.walk('../orm_skeleton_lab_5'):  # using os.walk() to pass recursively through folders
         for file in files:
             if dirs == folders_names and file not in files_names:
                 continue
