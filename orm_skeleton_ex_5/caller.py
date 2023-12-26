@@ -7,8 +7,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models
-from main_app.models import ArtworkGallery, Laptop
+from main_app.models import ArtworkGallery, Laptop, ChessPlayer, Meal
 from django.db.models import Q, Case, When, Value, F
+
 
 # Create and check models
 def bulk_create_arts(*args):
@@ -74,7 +75,100 @@ def show_the_most_expensive_laptop():
 def delete_inexpencive_laptops():
     Laptop.objects.filter(price__lt=1200).delete()
 
+
+def bulk_create_chess_players(*args):
+    ChessPlayer.objects.bulk_create(*args)
+
+
+def delete_chess_player():
+    ChessPlayer.objects.all().delete()
+
+
+def change_chess_games_won():
+    ChessPlayer.objects.filter(title='GM').update(games_won=30)
+
+
+def change_chess_games_lost():
+    ChessPlayer.objects.filter(title='no title').update(games_lost=25)
+
+
+
+def set_new_chefs():
+    Meal.objects.update(
+        chef=Case(
+            When(meal_type='Breakfast', then=Value('Gordon Ramsay')),
+            When(meal_type='Lunch', then=Value('Julia Child')),
+            When(meal_type='Dinner', then=Value('Jamie Oliver')),
+            When(meal_type='Snack', then=Value('Thomas Keller'))
+        )
+    )
+
+def set_new_preparation_times():
+    Meal.objects.update(
+        preparation_time=Case(
+            When(meal_type='Breakfast', then=Value('10 minutes')),
+            When(meal_type='Lunch', then=Value('12 minutes')),
+            When(meal_type='Dinner', then=Value('15 minutes')),
+            When(meal_type='Snack', then=Value('5 minutes'))
+        )
+    )
 # Run and print your queries
+# set_new_chefs()
+# meal1 = Meal.objects.create(
+#
+# name="Pancakes",
+#
+# meal_type="Breakfast",
+#
+# preparation_time="20 minutes",
+#
+# difficulty=3,
+#
+# calories=350,
+#
+# chef="Jane",
+#
+# )
+#
+# meal2 = Meal.objects.create(
+#
+# name="Spaghetti Bolognese",
+#
+# meal_type="Dinner",
+#
+# preparation_time="45 minutes",
+#
+# difficulty=4,
+#
+# calories=550,
+#
+# chef="Sarah",
+#
+# )
+#
+# Meal.objects.bulk_create(meal1, meal2)
+# change_chess_games_lost()
+# delete_chess_player()
+# player1 = ChessPlayer(
+#     username='Player1',
+#     title='no title',
+#     rating=2200,
+#     games_played=50,
+#     games_won=20,
+#     games_lost=25,
+#     games_drawn=5,
+# )
+#
+# player2 = ChessPlayer(
+#     username='Player2',
+#     title='IM',
+#     rating=2350,
+#     games_played=80,
+#     games_won=40,
+#     games_lost=25,
+#     games_drawn=15,
+# )
+# bulk_create_chess_players([player1, player2])
 # print(show_the_most_expensive_laptop())
 # laptop1 = Laptop(
 #     brand='Asus', processor='Intel Core i5', memory=8, storage=256, operation_system='Windows', price=899.99)
