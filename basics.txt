@@ -16,7 +16,7 @@ pip freeze > requirements.txt
 
 py manage.py createsuperuser
 
-py manage.py sqlmigrations main_app 0003 -> view the migration as SQL code
+py manage.py sqlcdmigrations main_app 0003 -> view the migration as SQL code
 
 py manage.py makemigrations main_app --empty -> will create empty file migration
 

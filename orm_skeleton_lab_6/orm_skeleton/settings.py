@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'orm_skeleton.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'orm_skeleton_ex_5_db',
+        'NAME': 'orm_skeleton_lab_6',
         'USER': 'postgres',
         'PASSWORD': '12345678',
         'HOST': 'localhost',  # Set to the address of your PostgreSQL server.
@@ -127,23 +127,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler'}
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG', # other levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
-    },
-    'loggers': {
-        'django.db.backends': { # responsible for the SQL logs
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        }
-    }
-}
