@@ -38,4 +38,11 @@ class StudentEnrollment(models.Model):
     student = models.ForeignKey(to=Student, on_delete=models.CASCADE)
     subject = models.ForeignKey(to=Subject, on_delete=models.CASCADE)
     enrollment_date = models.DateField(default=date.today)
-    grade = models.CharField(max_length=1, choices=GRADES)
+    grade = models.CharField(max_length=1, choices=GRADES, default='F')
+
+
+class LecturerProfile(models.Model):
+    lecturer = models.OneToOneField(to=Lecturer, on_delete=models.CASCADE)
+    email = models.EmailField(unique=True)
+    bio = models.TextField(null=True, blank=True)
+    office_location = models.CharField(max_length=100, blank=True, null=True)
