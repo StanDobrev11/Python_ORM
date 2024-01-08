@@ -1,12 +1,15 @@
 import os
+from datetime import date, timedelta
+
 import django
+from django.db.models import Avg
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Author, Artist, Song
+from main_app.models import Author, Artist, Song, Product, Review, DrivingLicense, Driver, Owner, Registration, Car
 
 
 # Create queries within functions
@@ -52,3 +55,72 @@ def remove_song_from_artist(artist_name: str, song_title: str):
     song = Song.objects.get(title=song_title)
 
     artist.songs.remove(song)
+
+
+def calculate_average_rating_for_product_by_name(product_name: str):
+    """returns the calculated average rating for a given product by its name."""
+
+    # product = Product.objects.get(name=product_name)
+    # return Review.objects.filter(product=product).aggregate(avg_rating=Avg('rating'))['avg_rating']
+
+    product = Product.objects.annotate(avg_rating=Avg('reviews__rating')).get(name=product_name)
+    return product.avg_rating
+
+
+def get_reviews_with_high_ratings(threshold: int):
+    """returns all reviews with greater than or equal ratings than the threshold."""
+
+    return Review.objects.filter(rating__gte=threshold)
+
+
+def get_products_with_no_reviews():
+    """returns all products that do NOT have any related reviews, ordered by product name (descending)."""
+
+    return Product.objects.filter(reviews__isnull=True).order_by('-name')
+
+
+def delete_products_without_reviews():
+    """deletes all the products that do not have any related reviews."""
+
+    get_products_with_no_reviews().delete()
+
+
+def calculate_licenses_expiration_dates():
+    """calculates the expiration date for all licenses. The expiration date is 365 days after the issue date.
+    Return the license number and the expiration date as a string, ordered by license number (descending)"""
+
+    all_licenses = DrivingLicense.objects.all().order_by('-license_number')
+
+    result = []
+
+    for license in all_licenses:
+        result.append(
+            f"License with id: {license.license_number} expires on {license.get_exp_date()}!")
+
+    return '\n'.join(result)
+
+
+def get_drivers_with_expired_licenses(due_date):
+    """returns all drivers (in a list) that have expired licenses.
+    A license counts as expired when the expiration date is one or more days after the due date."""
+
+    drivers_with_exp_licenses = Driver.objects.filter(drivinglicense__issue_date__gt=due_date - timedelta(days=365))
+
+    return drivers_with_exp_licenses
+
+
+def register_car_by_owner(owner: object):
+    """that register cars with the given owner object"""
+
+    first_reg = Registration.objects.filter(car__isnull=True).order_by('registration_date').first()
+    first_car = Car.objects.filter(registration__isnull=True).first()
+
+    first_car.owner = owner
+    first_car.save()
+
+    first_reg.car = first_car
+    first_reg.registration_date = date.today()
+    first_reg.save()
+
+    return f"Successfully registered {first_car} to {owner} with registration number {first_reg}."
+
