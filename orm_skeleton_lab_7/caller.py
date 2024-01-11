@@ -15,10 +15,7 @@ from main_app.models import Animal, Mammal, Bird, Reptile, ZooKeeper, Veterinari
 # Create and check models
 # Run and print your queries
 # keep the data from the previous exercise, so you can reuse it
-lion_birth_date = date.today() - timedelta(days=731)
-lion = Mammal.objects.create(name="Simba", species="Lion", birth_date=lion_birth_date, sound="Roar", fur_color="Golden")
-print(f"The lion's age is {lion.age}.")
-
-snake_birth_date = date.today() - timedelta(days=30)
-snake = Reptile.objects.create(name="Kaa", species="Python", birth_date=snake_birth_date, sound="Hiss", scale_type="Scales")
-print(f"The snake's age is {snake.age}.")
+v1 = Veterinarian.objects.create(first_name="John", last_name="Doe", phone_number="0896625120", license_number="VET123", availability=False)
+print(v1.is_available())
+v2 = Veterinarian.objects.create(first_name="Alice", last_name="Johnson", phone_number="0896529728", license_number="VET789")
+print(v2.is_available())

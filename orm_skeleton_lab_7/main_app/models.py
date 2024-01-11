@@ -5,6 +5,18 @@ from django.db import models
 
 
 # Create your models here.
+
+class BooleanChoiceField(models.BooleanField):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = (
+            (True, 'Available'),
+            (False, 'Not Available'),
+        )
+        kwargs['default'] = True
+        super().__init__(*args, **kwargs)
+
+
 class Animal(models.Model):
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=100)
@@ -13,7 +25,6 @@ class Animal(models.Model):
 
     @property
     def age(self):
-
         today = date.today()
         age = today.year - self.birth_date.year
 
@@ -73,6 +84,10 @@ class ZooKeeper(Employee):
 
 class Veterinarian(Employee):
     license_number = models.CharField(max_length=10)
+    availability = BooleanChoiceField()
+
+    def is_available(self):
+        return self.availability
 
 
 class ZooDisplayAnimal(Animal):
