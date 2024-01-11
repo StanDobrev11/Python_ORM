@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -8,6 +10,17 @@ class Animal(models.Model):
     species = models.CharField(max_length=100)
     birth_date = models.DateField()
     sound = models.CharField(max_length=100)
+
+    @property
+    def age(self):
+
+        today = date.today()
+        age = today.year - self.birth_date.year
+
+        if (today.month, today.day) < (self.birth_date.month, self.birth_date.day):
+            age -= 1
+
+        return age
 
 
 class Mammal(Animal):
@@ -67,18 +80,17 @@ class ZooDisplayAnimal(Animal):
         proxy = True
 
     def display_info(self):
-        cls_nfo = {
-            'Mammals': " Its fur color is {fur_color}.",
-            'Birds': " Its wingspan is {wing_span} cm.",
-            'Reptiles': " Its scale type is {scale_type}.",
-        }
+        additional_info = ""
 
-        extra_nfo = cls_nfo.get(self.__class__.__name__, '')
-
-
+        if hasattr(self, 'mammal'):
+            additional_info = f" Its fur color is {self.mammal.fur_color}."
+        elif hasattr(self, 'bird'):
+            additional_info = f" Its wingspan is {self.bird.wing_span} cm."
+        elif hasattr(self, 'reptile'):
+            additional_info = f" Its scale type is {self.reptile.scale_type}."
 
         return (f"Meet {self.name}! It's {self.species} and it's born {self.birth_date}. "
-                f"It makes a noise like '{self.sound}'!{extra_nfo}")
+                f"It makes a noise like '{self.sound}'!{additional_info}")
 
     def is_endangered(self):
         endangered_species = (
