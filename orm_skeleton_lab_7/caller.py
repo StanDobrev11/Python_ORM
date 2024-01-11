@@ -14,6 +14,7 @@ from main_app.models import Animal, Mammal, Bird, Reptile, ZooKeeper, Veterinari
 # Run and print your queries
 # keep the data from the previous exercise, so you can reuse it
 
-zookeeper = ZooKeeper(first_name="John", last_name="Doe", phone_number="0123456789", specialty="Fishes")
-zookeeper.full_clean()
-zookeeper.save()
+all_animals_info = ZooDisplayAnimal.objects.all()
+for a in all_animals_info:
+    print(a.display_info())
+    print(a.is_endangered())
