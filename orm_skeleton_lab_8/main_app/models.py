@@ -65,14 +65,27 @@ class Menu(models.Model):
     restaurant = models.ForeignKey(to=Restaurant, on_delete=models.CASCADE)
 
 
-class RestaurantReview(models.Model):
-    reviewer_name = models.CharField(max_length=100)
-    restaurant = models.ForeignKey(to=Restaurant, on_delete=models.CASCADE)
-    review_content = models.TextField()
+class RatingMixin(models.Model):
     rating = models.PositiveIntegerField(validators=[validators.MaxValueValidator(5)])
+    review_content = models.TextField()
 
     class Meta:
+        abstract = True
         ordering = ['-rating']
+
+
+class ReviewContentMixin(models.Model):
+    review_content = models.TextField()
+
+    class Meta:
+        abstract = True
+
+
+class RestaurantReview(RatingMixin):
+    reviewer_name = models.CharField(max_length=100)
+    restaurant = models.ForeignKey(to=Restaurant, on_delete=models.CASCADE)
+
+    class Meta(RatingMixin.Meta):
         verbose_name = "Restaurant Review"
         verbose_name_plural = "Restaurant Reviews"
         unique_together = ['reviewer_name', 'restaurant']
@@ -93,14 +106,11 @@ class FoodCriticRestaurantReview(RestaurantReview):
         unique_together = ['reviewer_name', 'restaurant']
 
 
-class MenuReview(models.Model):
+class MenuReview(RatingMixin):
     reviewer_name = models.CharField(max_length=100)
     menu = models.ForeignKey(to=Menu, on_delete=models.CASCADE)
-    review_content = models.TextField()
-    rating = models.PositiveIntegerField(validators=[validators.MaxValueValidator(5)])
 
-    class Meta:
-        ordering = ['-rating']
+    class Meta(RatingMixin.Meta):
         verbose_name = 'Menu Review'
         verbose_name_plural = 'Menu Reviews'
         unique_together = ['reviewer_name', 'menu']
