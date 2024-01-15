@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.core import validators
 from django.db import models
 
+from main_app.validators import validate_menu_categories
+
 
 # Create your models here.
 # class FinancialData(models.Model):
@@ -52,6 +54,25 @@ class Restaurant(models.Model):
         decimal_places=2,
         validators=[
             validators.MinValueValidator(limit_value=0, message="Rating must be at least 0.00."),
-            validators.MaxLengthValidator(limit_value=5, message="Rating cannot exceed 5.00.")
+            validators.MaxValueValidator(limit_value=5, message="Rating cannot exceed 5.00.")
         ]
     )
+
+
+class Menu(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(validators=[validate_menu_categories])
+    restaurant = models.ForeignKey(to=Restaurant, on_delete=models.CASCADE)
+
+
+class RestaurantReview(models.Model):
+    reviewer_name = models.CharField(max_length=100)
+    restaurant = models.ForeignKey(to=Restaurant, on_delete=models.CASCADE)
+    review_content = models.TextField()
+    rating = models.PositiveIntegerField(validators=[validators.MaxValueValidator(5)])
+
+    class Meta:
+        ordering = ['-rating']
+        verbose_name = "Restaurant Review"
+        verbose_name_plural = "Restaurant Reviews"
+        unique_together = ['reviewer_name', 'restaurant']
