@@ -144,7 +144,7 @@ def increase_room_capacity():
     all_rooms = HotelRoom.objects.all().order_by('id')
 
     for i, room in enumerate(all_rooms):
-        if not room.is_reserved:
+        if not room._is_reserved:
             continue
         if i == 0:
             room.capacity += room.id
@@ -156,13 +156,13 @@ def increase_room_capacity():
 
 def reserve_first_room():
     first_room = HotelRoom.objects.first()
-    first_room.is_reserved = True
+    first_room._is_reserved = True
     first_room.save()
 
 
 def delete_last_room():
     last_room = HotelRoom.objects.last()
-    if last_room.is_reserved:
+    if last_room._is_reserved:
         last_room.delete()
 
 
