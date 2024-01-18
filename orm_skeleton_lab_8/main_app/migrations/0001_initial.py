@@ -3,7 +3,7 @@
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import main_app.validators
+import main_app.custom_validators
 
 
 class Migration(migrations.Migration):

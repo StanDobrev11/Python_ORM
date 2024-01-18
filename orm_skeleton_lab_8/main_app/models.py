@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core import validators
 from django.db import models
 
-from main_app.validators import validate_menu_categories
+from main_app.custom_validators import validate_menu_categories
 
 
 # Create your models here.
