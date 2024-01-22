@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'orm_skeleton.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'orm_skeleton_ex_8',
+        'NAME': 'orm_skeleton_lab_9',
         'USER': 'postgres',
         'PASSWORD': '12345678',
         'HOST': 'localhost',  # Set to the address of your PostgreSQL server.
