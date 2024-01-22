@@ -87,7 +87,7 @@ def ordered_products_per_customer():
         orders_list.append(f"Order ID: {order.pk}, Customer: {order.customer.username}")
         all_products_in_order = order.products.all()
         for product in all_products_in_order:
-            orders_list.append(f"- Product: {product.name}, Category: {product.category}")
+            orders_list.append(f"- Product: {product.name}, Category: {product.category.name}")
 
     return '\n'.join(orders_list)
 
