@@ -1,5 +1,6 @@
 import os
 import django
+from django.db.models import Sum
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -58,7 +59,37 @@ from main_app.models import Product, Category, Customer, Order, OrderProduct
 #     return "All data entered!"
 #
 
+def product_quantity_ordered():
+    """
+    returns a summary of the total quantity ordered for each product available only for products that have at least
+    one unit ordered, arranged in descending order based on the total quantity ordered
+    """
 
+    min_one_order = OrderProduct.objects.values('product__name').annotate(
+        ttl_quantity=Sum('quantity')
+    ).filter(ttl_quantity__gte=1).order_by('-ttl_quantity')
+
+    ll = []
+    for product in min_one_order:
+        ll.append(f"Quantity ordered of {product['product__name']}: {product['ttl_quantity']}")
+
+    return '\n'.join(ll)
+
+
+def ordered_products_per_customer():
+    """
+    returns a summary of each ordered product by each customer, arranged in ascending order by the order ID.
+    """
+    orders = Order.objects.all().order_by('id')
+
+    orders_list = []
+    for order in orders:
+        orders_list.append(f"Order ID: {order.pk}, Customer: {order.customer.username}")
+        all_products_in_order = order.products.all()
+        for product in all_products_in_order:
+            orders_list.append(f"- Product: {product.name}, Category: {product.category}")
+
+    return '\n'.join(orders_list)
 
 
 # Run and print your queries
@@ -71,3 +102,6 @@ from main_app.models import Product, Category, Customer, Order, OrderProduct
 # print()
 # print('All Available Food Products:')
 # print(Product.objects.available_products_in_category("Food"))
+
+# print(product_quantity_ordered())
+print(ordered_products_per_customer())
