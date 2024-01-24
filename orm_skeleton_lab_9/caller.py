@@ -65,21 +65,29 @@ def product_quantity_ordered():
     one unit ordered, arranged in descending order based on the total quantity ordered
     """
 
-    min_one_order = OrderProduct.objects.values('product__name').annotate(
-        ttl_quantity=Sum('quantity')
-    ).filter(ttl_quantity__gte=1).order_by('-ttl_quantity')
+    # min_one_order = OrderProduct.objects.values('product__name').annotate(
+    #     ttl_quantity=Sum('quantity')
+    # ).filter(ttl_quantity__gte=1).order_by('-ttl_quantity')
+
+    min_one_order = Product.objects.annotate(
+        ttl_quantity=Sum('orderproduct__quantity')
+    ).exclude(ttl_quantity=0).order_by('-ttl_quantity')
 
     ll = []
     for product in min_one_order:
-        ll.append(f"Quantity ordered of {product['product__name']}: {product['ttl_quantity']}")
+        # ll.append(f"Quantity ordered of {product['product__name']}: {product['ttl_quantity']}")
+        ll.append(f"Quantity ordered of {product.name}: {product.ttl_quantity}")
 
     return '\n'.join(ll)
 
 
-def ordered_products_per_customer():
+def ordered_products_per_customer_slow():
     """
     returns a summary of each ordered product by each customer, arranged in ascending order by the order ID.
     """
+
+    # example using 'for-loops' -> too many queries to DB, not optimized
+
     orders = Order.objects.all().order_by('id')
 
     orders_list = []
@@ -90,6 +98,39 @@ def ordered_products_per_customer():
             orders_list.append(f"- Product: {product.name}, Category: {product.category.name}")
 
     return '\n'.join(orders_list)
+
+
+def ordered_products_per_customer():
+    # example using pre-fetch - when have many-to-many relations
+    orders = Order.objects.prefetch_related(
+        'customer',  # get related customer
+        'products',  # get all products in order
+        'products__category',  # get all categories for each product
+    ).order_by('id')
+
+    orders_list = []
+    for order in orders:
+        orders_list.append(f"Order ID: {order.pk}, Customer: {order.customer.username}")
+        all_products_in_order = order.products.all()
+        for product in all_products_in_order:
+            orders_list.append(f"- Product: {product.name}, Category: {product.category.name}")
+
+    return '\n'.join(orders_list)
+
+
+def filter_products():
+    """
+    returns information for all available products with prices greater than 3.00
+    Arranges the information in descending order by the price.
+    If there are two or more products with the same price, orders them by name in ascending order (alphabetically).
+    """
+    products = Product.objects.filter(price__gt=3, is_available=True).order_by('-price', 'name')
+
+    result = []
+    for product in products:
+        result.append(f"{product.name}: {product.price}lv.")
+
+    return '\n'.join(result)
 
 
 # Run and print your queries
@@ -104,4 +145,6 @@ def ordered_products_per_customer():
 # print(Product.objects.available_products_in_category("Food"))
 
 # print(product_quantity_ordered())
-print(ordered_products_per_customer())
+# print(ordered_products_per_customer_slow())
+# print(ordered_products_per_customer())
+print(filter_products())
