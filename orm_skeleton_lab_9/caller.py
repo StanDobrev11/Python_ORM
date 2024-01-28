@@ -2,7 +2,7 @@ import os
 from decimal import Decimal
 
 import django
-from django.db.models import Sum
+from django.db.models import Sum, F, Q
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -134,6 +134,7 @@ def filter_products():
 
     return '\n'.join(result)
 
+
 def give_discount():
     """
     reduces the product's price by 30% of all available products with prices greater than 3.00
@@ -141,15 +142,17 @@ def give_discount():
     If there are two or more products with the same price, orders them by name in ascending order (alphabetically).
     """
 
-    products = Product.objects.filter(price__gt=3, is_available=True).order_by('-price', 'name')
+    query = Q(price__gt=3) & Q(is_available=True)
+    price_reduction = F('price') * 0.7
+    products = Product.objects.filter(query).order_by('-price', 'name')
+    products.update(price=price_reduction)
 
     result = []
     for product in products:
-        product.price *= Decimal(0.7)
         result.append(f"{product.name}: {product.price :.2f}lv.")
-        product.save()
 
     return '\n'.join(result)
+
 
 # Run and print your queries
 #
@@ -166,4 +169,4 @@ def give_discount():
 # print(ordered_products_per_customer_slow())
 # print(ordered_products_per_customer())
 # print(filter_products())
-# print(give_discount())
+print(give_discount())
