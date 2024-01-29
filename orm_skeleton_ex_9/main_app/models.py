@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from main_app.managers import RealEstateListingManager
+from main_app.managers import RealEstateListingManager, VideoGameManager
+from main_app.validators import RangeValidator, rating_validator, year_validator
 
 
 # Create your models here.
@@ -25,6 +28,12 @@ class RealEstateListing(models.Model):
 
 
 class VideoGame(models.Model):
+    MIN_RELEASE_YEAR = 1990
+    MAX_RELEASE_YEAR = 2023
+
+    MIN_RATE_VALUE = Decimal(0)
+    MAX_RATE_VALUE = Decimal(10.0)
+
     GENRE_CHOICES = [
         ('Action', 'Action'),
         ('RPG', 'RPG'),
@@ -38,19 +47,28 @@ class VideoGame(models.Model):
 
     release_year = models.PositiveIntegerField(
         validators=[
-            MaxValueValidator(limit_value=1990, message="The release year must be between 1990 and 2023"),
-            MinValueValidator(limit_value=2023, message="The release year must be between 1990 and 2023"),
+            # MinValueValidator(limit_value=MIN_RELEASE_YEAR, message="The release year must be between 1990 and 2023"),
+            # MaxValueValidator(limit_value=MAX_RELEASE_YEAR, message="The release year must be between 1990 and 2023"),
+            # RangeValidator(
+            #     min_value=MIN_RELEASE_YEAR,
+            #     max_value=MAX_RELEASE_YEAR,
+            #     message="The release year must be between 1990 and 2023"
+            # ),
+            year_validator,
         ],
     )
 
     rating = models.DecimalField(
-        max_digits=2,
+        max_digits=3,
         decimal_places=1,
         validators=[
-            MinValueValidator(limit_value=0, message="The rating must be between 0.0 and 10.0"),
-            MaxValueValidator(limit_value=10, message="The rating must be between 0.0 and 10.0"),
+            # MinValueValidator(limit_value=MIN_RATE_VALUE, message="The rating must be between 0.0 and 10.0"),
+            # MaxValueValidator(limit_value=MAX_RATE_VALUE, message="The rating must be between 0.0 and 10.0"),
+            rating_validator,
         ],
     )
+
+    objects = VideoGameManager()
 
     def __str__(self):
         return self.title

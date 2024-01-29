@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Max, Avg, Min
 
 
 class RealEstateListingManager(models.Manager):
@@ -34,3 +34,27 @@ class RealEstateListingManager(models.Manager):
         """
 
         return self.values('location').annotate(counted=Count('location')).order_by('-counted', 'location')[:2]
+
+
+class VideoGameManager(models.Manager):
+
+    def games_by_genre(self, genre: str):
+        return self.filter(genre=genre)
+
+    def recently_released_games(self, year: int):
+        return self.filter(release_year__gte=year)
+
+    def highest_rated_game(self):
+        result_queryset = self.aggregate(highest_rating=Max('rating'))
+
+        return self.filter(rating=result_queryset['highest_rating'])
+
+    def lowest_rated_game(self):
+        result_queryset = self.aggregate(lowest_rating=Min('rating'))
+
+        return self.filter(rating=result_queryset['lowest_rating'])
+
+    def average_rating(self):
+        result = self.aggregate(average_rating=Avg('rating'))
+
+        return f"{result['average_rating'] :.1f}"
