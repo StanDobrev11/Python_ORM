@@ -148,11 +148,10 @@ def give_discount():
     products.update(price=price_reduction)
 
     result = []
-    for product in products:
-        result.append(f"{product.name}: {product.price :.2f}lv.")
+    for product in Product.objects.available_products().order_by('-price', 'name'):
+        result.append(f"{product.name}: {product.price}lv.")
 
     return '\n'.join(result)
-
 
 # Run and print your queries
 #
