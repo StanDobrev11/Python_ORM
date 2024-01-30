@@ -45,16 +45,15 @@ class VideoGameManager(models.Manager):
         return self.filter(release_year__gte=year)
 
     def highest_rated_game(self):
-        result_queryset = self.aggregate(highest_rating=Max('rating'))
-
-        return self.filter(rating=result_queryset['highest_rating'])
+        # done using aggregate -> not optimal due to 2 queries to DB
+        result = self.aggregate(highest_rating=Max('rating'))['highest_rating']
+        return self.filter(rating=result).first()
 
     def lowest_rated_game(self):
-        result_queryset = self.aggregate(lowest_rating=Min('rating'))
-
-        return self.filter(rating=result_queryset['lowest_rating'])
+        # done using annotate for maximum optimization
+        return self.annotate(min_rating=Min('rating')).order_by('min_rating').first()
 
     def average_rating(self):
-        result = self.aggregate(average_rating=Avg('rating'))
+        result = self.aggregate(average_rating=Avg('rating'))['average_rating']
 
-        return f"{result['average_rating'] :.1f}"
+        return f"{result :.1f}"

@@ -1,4 +1,6 @@
 import os
+from datetime import date
+
 import django
 
 
@@ -8,21 +10,27 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 #
 # # Import your models
-from main_app.models import RealEstateListing, VideoGame
-#
-print()
-#
-#
-# # Run the custom manager methods
-# action_games = VideoGame.objects.games_by_genre('Action')
-# recent_games = VideoGame.objects.recently_released_games(2019)
-# average_rating = VideoGame.objects.average_rating()
-# highest_rated = VideoGame.objects.highest_rated_game()
-# lowest_rated = VideoGame.objects.lowest_rated_game()
-#
-# # Print the results
-# print(action_games)
-# print(recent_games)
-# print(average_rating)
-# print(highest_rated)
-# print(lowest_rated)
+from main_app.models import RealEstateListing, VideoGame, Invoice, BillingInfo, Programmer, Project, Technology, Task, \
+    Exercise
+
+
+# Print the results
+long_and_hard_exercises = Exercise.get_long_and_hard_exercises()
+print("Long and hard exercises:")
+for exercise in long_and_hard_exercises:
+    print('- ' + exercise.name)
+
+short_and_easy_exercises = Exercise.get_short_and_easy_exercises()
+print("Short and easy exercises:")
+for exercise in short_and_easy_exercises:
+    print('- ' + exercise.name)
+
+exercises_within_duration = Exercise.get_exercises_within_duration(20, 40)
+print(f"Exercises within 20 - 40 minutes:")
+for exercise in exercises_within_duration:
+    print('- ' + exercise.name)
+
+exercises_with_difficulty_and_repetitions = Exercise.get_exercises_with_difficulty_and_repetitions(6, 15)
+print(f"Exercises with difficulty 6+ and repetitions 15+:")
+for exercise in exercises_with_difficulty_and_repetitions:
+    print('- ' + exercise.name)
