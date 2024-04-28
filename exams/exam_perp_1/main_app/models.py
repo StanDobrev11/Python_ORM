@@ -1,9 +1,14 @@
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 
+from main_app.managers import CustomProfileManager
+
 
 # Create your models here.
 class Profile(models.Model):
+
+    objects = CustomProfileManager()
+
     full_name = models.CharField(
         max_length=100,
         validators=[MinLengthValidator(limit_value=2)]
@@ -47,9 +52,9 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    profile = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='orders')
 
-    products = models.ManyToManyField(to=Product)
+    products = models.ManyToManyField(to=Product, related_name='orders')
 
     total_price = models.DecimalField(
         max_digits=10,
