@@ -61,11 +61,15 @@ def get_profiles(search_string=None):
     contain the search string.
     Order the profile objects by full name, ascending.
      """
-    query = (Q(full_name__icontains=search_string) |
-             Q(email__icontains=search_string) |
-             Q(phone_number__icontains=search_string))
+    if search_string:
+        query = (Q(full_name__icontains=search_string) |
+                 Q(email__icontains=search_string) |
+                 Q(phone_number__icontains=search_string))
 
-    all_profile_objs = Profile.objects.all().filter(query).prefetch_related('orders').order_by('full_name')
+        all_profile_objs = Profile.objects.all().filter(query).prefetch_related('orders').order_by('full_name')
+
+    else:
+        all_profile_objs = Profile.objects.all().order_by('full_name')
 
     result = []
     for obj in all_profile_objs:
@@ -95,14 +99,17 @@ def get_last_sold_products():
     It retrieves the products from the latest order object, ordered by product name, ascending.
     The status of the order does not matter ("Completed" or "Not Completed").
     """
-    get_all_orders = Order.objects.all().order_by('-creation_date')
-    last_order = get_all_orders.first()
+    last_order = Order.objects.order_by('-creation_date').first()
 
-    result = []
-    for product in last_order.products.all():
-        result.append(f"{product.name}")
+    if not last_order:
+        return ""
 
-    return ', '.join(result) if result else ''
-# print(get_profiles(search_string='@'))
+    products = last_order.products.all().order_by('name')
+    result = [product.name for product in products]
+
+    return f"Last sold products: {', '.join(result)}"
+
+
+# print(get_profiles())
 # print(get_loyal_profiles())
 # print(get_last_sold_products())
