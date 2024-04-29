@@ -6,7 +6,6 @@ from main_app.managers import CustomProfileManager
 
 # Create your models here.
 class Profile(models.Model):
-
     objects = CustomProfileManager()
 
     full_name = models.CharField(
@@ -27,6 +26,9 @@ class Profile(models.Model):
     is_active = models.BooleanField(default=True)
 
     creation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.full_name
 
 
 class Product(models.Model):
@@ -50,6 +52,9 @@ class Product(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.name} - {self.price}"
+
 
 class Order(models.Model):
     profile = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='orders')
@@ -65,3 +70,6 @@ class Order(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
 
     is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.profile} - {self.creation_date}"
