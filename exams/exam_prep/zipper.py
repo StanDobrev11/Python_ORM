@@ -11,12 +11,17 @@ files_names = [
     'caller.py', 'manage.py', 'requirements.txt'
 ]
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+filename = 'output.zip'
+
+filepath = os.path.join(current_dir, filename)
+
 # check if output.zip exists and deletes it
-if os.path.exists('output.zip'):
-    os.remove('output.zip')
+if os.path.exists(filepath):
+    os.remove(filepath)
 
 # zips files and folders
-with zipfile.ZipFile('output.zip', 'w') as zipf:
+with zipfile.ZipFile(filepath, 'w') as zipf:
     for root, dirs, files in os.walk(
             f'../{os.path.basename(os.getcwd())}'):  # using os.walk() to pass recursively through folders
         for file in files:
