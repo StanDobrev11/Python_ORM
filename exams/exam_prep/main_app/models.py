@@ -1,10 +1,12 @@
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
 from django.db import models
 
+from main_app.models_mixins import IsAwardedMixin, LastUpdatedMixin
+
 
 # Create your models here.
 
-class AbstractPerson(models.Model):
+class BasePerson(models.Model):
     class Meta:
         abstract = True
 
@@ -23,19 +25,8 @@ class AbstractPerson(models.Model):
     )
 
 
-class AbstractAwardedAndUpdatedMixin(models.Model):
-    class Meta:
-        abstract = True
-
-    is_awarded = models.BooleanField(
-        default=False
-    )
-
-    last_updated = models.DateTimeField(auto_now=True)
-
-
-class Director(AbstractPerson):
-    years_of_experience = models.IntegerField(
+class Director(BasePerson):
+    years_of_experience = models.SmallIntegerField(
         default=0,
         validators=[MinValueValidator(0)]
     )
@@ -44,13 +35,13 @@ class Director(AbstractPerson):
         return self.full_name
 
 
-class Actor(AbstractPerson, AbstractAwardedAndUpdatedMixin):
+class Actor(BasePerson, IsAwardedMixin, LastUpdatedMixin):
 
     def __str__(self):
         return self.full_name
 
 
-class Movie(AbstractAwardedAndUpdatedMixin):
+class Movie(IsAwardedMixin, LastUpdatedMixin):
     GENRE_CHOICES = (
         ('Action', 'Action'),
         ('Comedy', 'Comedy'),
@@ -80,10 +71,10 @@ class Movie(AbstractAwardedAndUpdatedMixin):
         max_digits=3,
         decimal_places=1,
         validators=[
-            MinValueValidator(0),
-            MaxValueValidator(10)
+            MinValueValidator(0.0),
+            MaxValueValidator(10.0)
         ],
-        default=0
+        default=0.0
     )
 
     is_classic = models.BooleanField(
@@ -98,7 +89,7 @@ class Movie(AbstractAwardedAndUpdatedMixin):
 
     starring_actor = models.ForeignKey(
         to=Actor,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         related_name='movie',
         null=True,
         blank=True
