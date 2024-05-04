@@ -23,5 +23,5 @@ class ActorAdmin(admin.ModelAdmin):
 class MovieAdmin(admin.ModelAdmin):
     list_display = ('title', 'storyline', 'rating', 'director')
     list_filter = ('is_awarded', 'is_classic', 'genre')
-    search_fields = ('title',)
+    search_fields = ('title', 'director__full_name')
     readonly_fields = ('last_updated',)
