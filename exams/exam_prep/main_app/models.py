@@ -1,6 +1,7 @@
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
 from django.db import models
 
+from main_app.managers import CustomManager
 from main_app.models_mixins import IsAwardedMixin, LastUpdatedMixin
 
 
@@ -26,6 +27,8 @@ class BasePerson(models.Model):
 
 
 class Director(BasePerson):
+    objects = CustomManager()
+
     years_of_experience = models.SmallIntegerField(
         default=0,
         validators=[MinValueValidator(0)]
