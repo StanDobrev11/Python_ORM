@@ -54,15 +54,15 @@ def get_top_actor():
     """
     It retrieves the starring actor with the greatest number of movies s/he starred in.
     """
-    top_actor = Actor.objects.annotate(movies_count=Count('movies')).order_by('-movies_count', 'full_name').first()
+    top_actor = Actor.objects.annotate(movie_count=Count('movie')).order_by('-movie_count', 'full_name').first()
 
-    if not top_actor or not top_actor.movies.exists():
+    if not top_actor or not top_actor.movie.exists():
         return ''
 
-    average_rating = top_actor.movies.aggregate(Avg('rating')).get('rating__avg') or 0
+    average_rating = top_actor.movie.aggregate(Avg('rating')).get('rating__avg') or 0
 
     return (f"Top Actor: {top_actor.full_name}, "
-            f"starring in movies: {', '.join(movie.title for movie in top_actor.movies.all())}, "
+            f"starring in movies: {', '.join(movie.title for movie in top_actor.movie.all())}, "
             f"movies average rating: {round(average_rating, 1)}")
 
 
