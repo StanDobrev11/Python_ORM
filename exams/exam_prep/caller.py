@@ -74,6 +74,11 @@ def get_actors_by_movies_count():
     """
     actors = Actor.objects.annotate(movies_count=Count('movies')).order_by('-movies_count', 'full_name').all()[:3]
 
+    movies = Movie.objects.all()
+
+    if not movies:
+        return ''
+
     return '\n'.join(f"{actor.full_name}, participated in {actor.movies_count} movies" for actor in actors)
 
 
@@ -93,7 +98,7 @@ def get_top_rated_awarded_movie():
             f"{movie.title}, "
             f"rating: {round(movie.rating, 1)}. "
             f"Starring actor: {movie.starring_actor.full_name if movie.starring_actor else 'N/A'}. "
-            f"Cast: {', '.join(actor.full_name for actor in movie.actors.order_by('full_name'))}")
+            f"Cast: {', '.join(actor.full_name for actor in movie.actors.order_by('full_name'))}.")
 
 
 def increase_rating():
@@ -118,5 +123,5 @@ def increase_rating():
 # print(get_top_director())
 # print(get_top_actor())
 # print(get_actors_by_movies_count())
-print(get_top_rated_awarded_movie())
+# print(get_top_rated_awarded_movie())
 # print(increase_rating())
