@@ -1,7 +1,7 @@
 import os
 
 import django
-from django.db.models import Q
+from django.db.models import Q, Count
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -37,6 +37,30 @@ def get_authors(search_name=None, search_email=None):
                      for author in authors)
 
 
+def get_top_publisher():
+    """It retrieves the author with the greatest number of published articles."""
+
+    top_author = Author.objects.get_authors_by_article_count().first()
+
+    if not top_author or top_author.articles_num < 1:
+        return ''
+
+    return f"Top Author: {top_author.full_name} with {top_author.articles_num} published articles."
+
+
+def get_top_reviewer():
+    """
+    It retrieves the author with the greatest number of published reviews.
+    """
+
+    top_author = Author.objects.annotate(published_reviews=Count('review')).order_by('-published_reviews', 'email').first()
+
+    if not top_author or top_author.published_reviews < 1:
+        return ''
+
+    return f"Top Reviewer: {top_author.full_name} with {top_author.published_reviews} published reviews."
 
 
 # print(get_authors(search_email='@'))
+# print(get_top_publisher())
+# print(get_top_reviewer())
