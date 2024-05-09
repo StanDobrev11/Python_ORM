@@ -85,12 +85,14 @@ class Review(models.Model):
 
     author = models.ForeignKey(
         to=Author,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="reviews"
     )
 
     article = models.ForeignKey(
         to=Article,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="reviews"
     )
 
     published_on = models.DateTimeField(
